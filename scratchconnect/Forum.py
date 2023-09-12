@@ -114,6 +114,27 @@ class Forum:
         return requests.get(
             f"https://scratchdb.lefty.one/v3/forum/topic/posts/{self.id()}/{page}?o={order}").json()
 
+    def post(self, body_content):
+        """
+        Post a comment in the forum topic
+        :param body_content: The content of the comment
+        """
+        if self._logged_in is False:
+            raise Exceptions.UnauthorizedAction("Cannot perform the action because the user is not logged in!")
+
+        url = f"https://scratch.mit.edu/discuss/topic/{self.id()}/"
+        self.headers['referer'] = url
+        
+        data = {
+            'body': body_content,
+            'AddPostForm': ''
+        }
+
+        response = self.session.post(url, headers=self.headers, data=data)
+
+        return response
+
+
     def ocular_reactions(self, post_id: int) -> dict:
         """
         Get the ocular reactions
